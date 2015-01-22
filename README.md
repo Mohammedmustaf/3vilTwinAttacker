@@ -3,7 +3,8 @@ This tool create an rogue Wi-Fi access point , purporting to provide wireless In
 
 ---
 
-## Video Demo: https://www.youtube.com/watch?v=Jrb43KVPIJw
+## Video Demo
+
 [![Video Demo](http://img.youtube.com/vi/Jrb43KVPIJw/0.jpg)](http://www.youtube.com/watch?v=Jrb43KVPIJw)
 
 ---
