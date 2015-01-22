@@ -1,7 +1,6 @@
 # 3vilTiwnAttacker
-this tool create an rogue Wi-Fi access point , purporting to provide wireless Internet services, but snooping on the traffic.
+This tool create an rogue Wi-Fi access point , purporting to provide wireless Internet services, but snooping on the traffic.
 
-![alt image](https://dl.dropboxusercontent.com/u/97321327/evil/evil.png 3vilTiwnAttacker)
 ---
 
 ## Video Demo: https://www.youtube.com/watch?v=Jrb43KVPIJw
@@ -11,30 +10,30 @@ this tool create an rogue Wi-Fi access point , purporting to provide wireless In
 
 ### Software dependencies:
 
-* recommended to use Kali linux
-* ettercap
-* sslstrip
-* airbase-ng include in aircrack-ng
-* DHCP
+* Recommended to use Kali linux.
+* Ettercap.
+* Sslstrip.
+* Airbase-ng include in aircrack-ng.
+* DHCP.
 
-#### [install dhcp in  Debian-based]
+#### [install DHCP in  Debian-based]
 
-##### [Ubuntu]
+##### Ubuntu
 
 ```sh
 $ sudo apt-get install isc-dhcp-server
 ```
 
-##### [Kali linux]
+##### Kali linux
 
 ```sh
 $ echo "deb http://ftp.de.debian.org/debian wheezy main " >> /etc/apt/sources.list
 $ apt-get update && apt-get install isc-dhcp-server
 ```
 
-#### [install dhcp in  redhat-based]
+#### [install DHCP in  redhat-based]
 
-##### [Fedora]
+##### Fedora
 
 ```sh
 $ sudo yum install dhcp
@@ -45,19 +44,19 @@ $ sudo yum install dhcp
 
 ![Tools Options](https://dl.dropboxusercontent.com/u/97321327/evil/evil2.png)
 
-**Etter.dns:** edit etter.dns to loading module dns spoof.
+**Etter.dns:** Edit etter.dns to loading module dns spoof.
 
 
-**Dns Spoof:** start dns spoof attack in interface ath0 fake AP.
+**Dns Spoof:** Start dns spoof attack in interface ath0 fake AP.
 
 
-**Ettercap:** start ettercap attack in host connected AP fake Capturing login credentials.
+**Ettercap:** Start ettercap attack in host connected AP fake Capturing login credentials.
 
 
-**Sslstrip:** the sslstrip listen the traffic on port 10000.
+**Sslstrip:** The sslstrip listen the traffic on port 10000.
 
 
-**Driftnet:** the driftnet sniffs and decodes any JPEG TCP sessions, then displays in  an window.
+**Driftnet:** The driftnet sniffs and decodes any JPEG TCP sessions, then displays in  an window.
 
 
 ---
