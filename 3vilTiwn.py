@@ -34,7 +34,7 @@ YELLOW = '\033[33m'
 RED = '\033[91m'
 ENDC = '\033[0m'
 __author__ = 'P0cl4bs Team'
-__version__= "1.0"
+__version__= "0.1"
 __date__= "18/01/2015"
 def placa(s):
     comando = "ls -1 /sys/class/net"
