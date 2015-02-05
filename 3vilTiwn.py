@@ -34,17 +34,13 @@ YELLOW = '\033[33m'
 RED = '\033[91m'
 ENDC = '\033[0m'
 __author__ = 'P0cl4bs Team'
-__version__= "0.1"
-__date__= "18/01/2015"
-def placa(s):
+__version__= "0.1.2"
+__date__= "02/05/2015"
+def placa():
     comando = "ls -1 /sys/class/net"
     proc = Popen(comando,stdout=PIPE, shell=True)
     data = proc.communicate()[0]
-    if search(s, data):
-        s = s
-    else:
-        s = "Not Found"
-    return s
+    return  data.split('\n')
 
 class frm_main(QWidget):
 
@@ -54,7 +50,7 @@ class frm_main(QWidget):
         self.Main = QVBoxLayout()
         self.intGUI()
         self.setGeometry(0, 0, 300, 400)
-        self.setWindowTitle("3vilTwin Wifi Attacker")
+        self.setWindowTitle("3vilTwin  Attacker" + __version__)
         self.interface = "mon0"
 
     def center(self):
@@ -110,11 +106,10 @@ class frm_main(QWidget):
         self.input_AP = QLineEdit(self)
         self.input_canal = QLineEdit(self)
         self.w = QComboBox(self)
-        self.w.addItem(placa("wlan0"))
-        self.w.addItem(placa("wlan1"))
-        self.w.addItem(placa("wlan2"))
-        self.w.addItem(placa("wlan3"))
-        self.w.addItem(placa("wlan4"))
+        n = placa()
+        for i,j in enumerate(n):
+            if search("wlan", j):
+                self.w.addItem(n[i])
         self.form = QFormLayout()
 
         hLine 	=  QFrame()
