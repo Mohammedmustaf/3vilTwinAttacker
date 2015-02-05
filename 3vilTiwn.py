@@ -50,7 +50,7 @@ class frm_main(QWidget):
         self.Main = QVBoxLayout()
         self.intGUI()
         self.setGeometry(0, 0, 300, 400)
-        self.setWindowTitle("3vilTwin  Attacker" + __version__)
+        self.setWindowTitle("3vilTwin  Attacker " + __version__)
         self.interface = "mon0"
 
     def center(self):
