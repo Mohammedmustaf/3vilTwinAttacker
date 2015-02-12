@@ -33,7 +33,7 @@ GREEN = '\033[32m'
 YELLOW = '\033[33m'
 RED = '\033[91m'
 ENDC = '\033[0m'
-__author__ = 'P0cl4bs Team'
+__author__ = '@mh4x0f P0cl4bs Team'
 __version__= "0.1.2"
 __date__= "02/05/2015"
 def placa():
