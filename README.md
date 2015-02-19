@@ -66,7 +66,7 @@ $ sudo yum install dhcp
 ### New Options Update 0.5.3
 ![Tools Options](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate2.png)
 
-**Deauth Attack:** kill all devices connected in AP (wireless network) or the attacker can also put the Mac-address in the Target field.
+**Deauth Attack:** kill all devices connected in AP (wireless network) or the attacker can Also put the Mac-address in the Client field, Then only one client disconnects the access point.
 
 
 **Probe Request:**  Probe request  capture the  clients tentando conectar ao AP,Probe requests can be sent by anyone with a legitimate Media Access Control (MAC) address, as association to the network is not required at this stage.
