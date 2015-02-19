@@ -1,6 +1,6 @@
-# 3vilTwinAttacker 0.1.2
+# 3vilTwinAttacker v0.5.3 Beta
 This tool create an rogue Wi-Fi access point , purporting to provide wireless Internet services, but snooping on the traffic.
-
+![Tool Home](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate.png)
 ---
 
 ## Video Demo
@@ -16,6 +16,7 @@ This tool create an rogue Wi-Fi access point , purporting to provide wireless In
 * Sslstrip.
 * Airbase-ng include in aircrack-ng.
 * DHCP.
+* Nmap.
 
 #### [install DHCP in  Debian-based]
 
@@ -61,6 +62,21 @@ $ sudo yum install dhcp
 
 
 ---
+
+### New Options Update 0.5.3
+![Tools Options](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate2.png)
+
+**Deauth Attack:** kill all devices connected in AP (wireless network) or the attacker can also put the Mac-address in the Target field.
+
+
+**Probe Request:**  Probe request  capture the  clients tentando conectar ao AP,Probe requests can be sent by anyone with a legitimate Media Access Control (MAC) address, as association to the network is not required at this stage.
+
+
+**Mac Changer:** you can now easily spoof the MAC address. With a few clicks, users will be able to change their MAC addresses.
+
+
+**Device FingerPrint:**  list devices connected the network mini fingerprint, is information collected about a local computing device.
+
 
 The MIT License (MIT)
 
