@@ -77,7 +77,7 @@ $ sudo yum install dhcp
 
 **Device FingerPrint:**  list devices connected the network mini fingerprint, is information collected about a local computing device.
 
-
+---
 The MIT License (MIT)
 
 Copyright (c) 2014 P0cL4bs Team
