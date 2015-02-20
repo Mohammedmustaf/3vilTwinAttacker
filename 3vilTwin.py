@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #coding: utf-8
 
-#P0cL4bs Team * { N4sss , MMXM , Kwrnel, MovCode, joridos, Mh4x0f} *
+#P0cL4bs Team * { N4sss , MMXM , Kwrnel, MovCode, joridos, Mh4x0f, Brenords} *
 #The MIT License (MIT)
 #Permission is hereby granted, free of charge, to any person obtaining a copy of
 #this software and associated documentation files (the "Software"), to deal in
