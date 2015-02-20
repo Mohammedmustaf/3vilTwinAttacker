@@ -3,17 +3,6 @@ This tool create an rogue Wi-Fi access point , purporting to provide wireless In
 ![Tool Home](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate.png)
 ---
 
-## Video Demo
-
-[![Video Demo](http://img.youtube.com/vi/Jrb43KVPIJw/0.jpg)](http://www.youtube.com/watch?v=Jrb43KVPIJw)
-
----
-
-[![Screen](http://img.youtube.com/vi/qVGLGNYyLzg/0.jpg)](http://youtu.be/qVGLGNYyLzg)
-
-
----
-
 ### Software dependencies:
 
 * Recommended to use Kali linux.
@@ -83,6 +72,17 @@ $ sudo yum install dhcp
 
 
 **Device FingerPrint:**  list devices connected the network mini fingerprint, is information collected about a local computing device.
+
+## Video Demo
+
+[![Video Demo](http://img.youtube.com/vi/Jrb43KVPIJw/0.jpg)](http://www.youtube.com/watch?v=Jrb43KVPIJw)
+
+---
+
+[![Screen](http://img.youtube.com/vi/qVGLGNYyLzg/0.jpg)](http://youtu.be/qVGLGNYyLzg)
+
+
+
 
 ---
 The MIT License (MIT)
