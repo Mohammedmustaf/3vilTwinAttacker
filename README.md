@@ -65,7 +65,7 @@ $ sudo yum install dhcp
 **Deauth Attack:** kill all devices connected in AP (wireless network) or the attacker can Also put the Mac-address in the Client field, Then only one client disconnects the access point.
 
 
-**Probe Request:**  Probe request  capture the  clients tentando conectar ao AP,Probe requests can be sent by anyone with a legitimate Media Access Control (MAC) address, as association to the network is not required at this stage.
+**Probe Request:**  Probe request  capture the  clients trying to connect to AP,Probe requests can be sent by anyone with a legitimate Media Access Control (MAC) address, as association to the network is not required at this stage.
 
 
 **Mac Changer:** you can now easily spoof the MAC address. With a few clicks, users will be able to change their MAC addresses.
