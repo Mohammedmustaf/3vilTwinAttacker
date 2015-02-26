@@ -465,17 +465,19 @@ class frm_deauth(QWidget):
     def kill_thread(self):
         self.control = 1
     def exec_sniff(self):
-        popen("airmon-ng stop mon0")
         dot =1
         count = 0
         if self.get_placa.currentText() == "":
             QMessageBox.information(self, "Network Adapter", 'Network Adapter Not found try again.')
         else:
             comando = "ifconfig"
-            proc = Popen(comando,stdout=PIPE, shell=True)
+            proc = Popen(comando,stdout=PIPE, shell=False)
             data = proc.communicate()[0]
             if search("mon0", data):
                 dot = 0
+                c = "airmon-ng stop mon0".split()
+                Popen(c,stdout=PIPE, shell=False)
+                system("airmon-ng start %s" %(self.get_placa.currentText()))
             else:
                 system("airmon-ng start %s" %(self.get_placa.currentText()))
             if self.time_scan.currentText() == "10s":
@@ -488,6 +490,7 @@ class frm_deauth(QWidget):
             t = len(self.ap_list) -1
             i = 0
             items = []
+            cap = []
             for i in range(t):
                 if len(self.ap_list[i]) < len(self.ap_list[i+1]):
                     if i != 0:
@@ -497,15 +500,26 @@ class frm_deauth(QWidget):
                             pass
                         else:
                             self.list.addItem(self.ap_list[i] + "-" + self.ap_list[i+1])
+                            if not (self.ap_list[i] + "-" + self.ap_list[i+1]) in cap:
+                                cap.append(self.ap_list[i] + "-" + self.ap_list[i+1])
                     else:
                         self.list.addItem(self.ap_list[i] + "-" + self.ap_list[i+1])
+                        if not (self.ap_list[i] + "-" + self.ap_list[i+1]) in cap:
+                            cap.append(self.ap_list[i] + "-" + self.ap_list[i+1])
                 else:
                     self.list.addItem(self.ap_list[i+1] + "-" + self.ap_list[i])
+                    if not (self.ap_list[i+1] + "-" + self.ap_list[i]) in cap:
+                        cap.append(self.ap_list[i+1] + "-" + self.ap_list[i])
                 if  self.ap_list[i] < i:
                     pass
                     break
                 else:
                     dot = 1
+            self.list.clear()
+            for i in cap:
+                self.list.addItem(i)
+            cap = []
+            self.ap_list = []
     def Scanner_devices(self,pkt):
         dot = 0
         if pkt.type == 0 and pkt.subtype == 8:
