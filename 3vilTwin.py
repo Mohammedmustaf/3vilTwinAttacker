@@ -487,11 +487,10 @@ class frm_deauth(QWidget):
             elif self.time_scan.currentText() == "30s":
                 count = 600
             sniff(iface=self.interface, prn =self.Scanner_devices, count=count)
-            t = len(self.ap_list) -1
             i = 0
             items = []
             cap = []
-            for i in range(t):
+            for i in range(len(self.ap_list) -1):
                 if len(self.ap_list[i]) < len(self.ap_list[i+1]):
                     if i != 0:
                         for index in xrange(self.list.count()):
