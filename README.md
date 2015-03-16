@@ -1,4 +1,4 @@
-# 3vilTwinAttacker v0.5.3 Beta
+# 3vilTwinAttacker v0.5.3 Release
 This tool create an rogue Wi-Fi access point , purporting to provide wireless Internet services, but snooping on the traffic.
 ![Tool Home](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate.png)
 ---
