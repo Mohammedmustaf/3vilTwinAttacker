@@ -1,7 +1,7 @@
 <?xml version="1.0" ?><settings>
     <configure>
-        <item0 deauth_scapy="False"/>
-        <item1 deauth_mdk3="True"/>
+        <item0 deauth_scapy="True"/>
+        <item1 deauth_mdk3="False"/>
         <item2 iscdhcpserver="True"/>
         <item3 dnsmasq="False"/>
         <mdk3 arguments="a -a"/>
@@ -9,7 +9,7 @@
         <local1 gateway="192.168.1.1"/>
         <mac getmac="None"/>
         <scan rangeIP="100-199"/>
-        <monitor0 scan_scapy="False"/>
-        <monitor1 scan_airodump="True"/>
+        <monitor0 scan_scapy="True"/>
+        <monitor1 scan_airodump="False"/>
     </configure>
 </settings>
