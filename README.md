@@ -1,4 +1,4 @@
-# 3vilTwinAttacker v0.5.3 Release
+# 3vilTwinAttacker v0.5.8 Release
 This tool create an rogue Wi-Fi access point , purporting to provide wireless Internet services, but snooping on the traffic.
 ![Tool Home](https://dl.dropboxusercontent.com/u/97321327/evil/3vil1.png)
 ---
@@ -12,6 +12,13 @@ This tool create an rogue Wi-Fi access point , purporting to provide wireless In
 * DHCP.
 * Nmap.
 
+#### Ubuntu and Kali install
+```sh
+$ chmod +x install.sh
+```
+```sh
+$ sudo ./install --install
+```
 #### [install DHCP in  Debian-based]
 
 ##### Ubuntu
@@ -59,7 +66,7 @@ $ sudo yum install dhcp
 
 
 
-### New Options Update 0.5.3
+### New Options
 ![Tools Options](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate2.png)
 
 **Deauth Attack:** kill all devices connected in AP (wireless network) or the attacker can Also put the Mac-address in the Client field, Then only one client disconnects the access point.
@@ -73,6 +80,13 @@ $ sudo yum install dhcp
 
 **Device FingerPrint:**  list devices connected the network mini fingerprint, is information collected about a local computing device.
 
+**DHCP Starvation Attack:** this module DHCP Starvation can be classified as a Denial of Service attack. is an attack that works by broadcasting vast numbers of DHCP requests with spoofed MAC addresses simultaneously.
+
+**DNS Spoof Manager:** this module DNS spoofing is the making change in hostname ip-address table, this table tells the route will be that DNS address for that particular IP address, thus changing the address of this table we can redirect wherever we want.
+
+**Windows Update Attack:**  this module is an attack DNS spoof que generate an update the page fake Windows, causing the victim to download a fake file update. 
+
+**ARP Posion Attack:**  change tables ARPspoof the target and redirect all request tcp to ip attacker.
 ## Video Demo
 
 [![Video Demo](http://img.youtube.com/vi/Jrb43KVPIJw/0.jpg)](http://www.youtube.com/watch?v=Jrb43KVPIJw)
