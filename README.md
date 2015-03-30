@@ -97,7 +97,7 @@ $ sudo yum install dhcp
 
 ---
 [![video 2](http://img.youtube.com/vi/rNWvpV6NZoI/0.jpg)](http://youtu.be/rNWvpV6NZoI)
-https://www.youtube.com/watch?v=rNWvpV6NZoI
+
 
 
 ---
