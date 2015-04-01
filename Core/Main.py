@@ -18,6 +18,7 @@ from Module.AttackUp import frm_update_attack
 from Core.check import check_dependencies
 from Core.check_privilege import frm_privelege
 from Core.Settings_fuc import frm_Settings
+from Module.AttackUp import frm_WinSoftUp
 from Core.update import frm_Update
 from Module.arps_Posion import frm_Arp_Poison
 __author__ = ' @mh4x0f P0cl4bs Team'
@@ -116,7 +117,6 @@ class frm_main(QWidget):
         btn_mac.setIcon(QIcon("rsc/mac.png"))
         btn_probe.setIcon(QIcon("rsc/probe.png"))
         btn_deauth.setIcon(QIcon("rsc/deauth.png"))
-
         # icons tools
         dns_spoof.setIcon(QIcon("rsc/dns_spoof.png"))
         ettercap.setIcon(QIcon("rsc/ettercap.png"))
@@ -202,7 +202,16 @@ class frm_main(QWidget):
         self.form.addRow("Gateway:", self.input_gw)
         self.form.addRow("AP Name:", self.input_AP)
         self.form.addRow("Channel:", self.input_canal)
-        self.form.addRow("Network Card List:", self.w)
+        #self.form.addRow("Network Card List:", self.w)
+
+        # grid network adapter fix
+        self.btrn_refresh = QPushButton("Refresh")
+        self.btrn_refresh.setIcon(QIcon("rsc/refresh.png"))
+        self.btrn_refresh.clicked.connect(self.refrash_interface)
+        self.grid = QGridLayout()
+        self.grid.addWidget(QLabel("Network Adapter:"),0,0)
+        self.grid.addWidget(self.w, 0,1)
+        self.grid.addWidget(self.btrn_refresh,0,2)
 
         self.btn_start_attack = QPushButton("Start Attack", self)
         self.btn_start_attack.setIcon(QIcon("rsc/start.png"))
@@ -213,6 +222,7 @@ class frm_main(QWidget):
         self.btn_cancelar.clicked.connect(self.kill)
         self.btn_start_attack.clicked.connect(self.start_air)
 
+
         self.dialogTextBrowser = frm_window(self)
         self.form2 = QFormLayout()
         self.form2.addRow(self.btn_start_attack, self.btn_cancelar)
@@ -221,8 +231,10 @@ class frm_main(QWidget):
 
         self.form2.addRow(self.listbox)
         self.Main.addLayout(self.form)
+        self.Main.addLayout(self.grid)
         self.Main.addLayout(self.form2)
         self.setLayout(self.Main)
+
 
     def show_update(self):
         self.n = frm_Update()
@@ -272,6 +284,12 @@ class frm_main(QWidget):
         self.w.setGeometry(QRect(100, 100, 450, 300))
         self.w.show()
 
+    def refrash_interface(self):
+        self.w.clear()
+        n = self.mod_import.placa()
+        for i,j in enumerate(n):
+            if search("wlan", j):
+                self.w.addItem(n[i])
     def kill(self):
         nano = ["echo \"0\" > /proc/sys/net/ipv4/ip_forward","iptables --flush",  "iptables --table nat --flush" ,\
                 "iptables --delete-chain", "iptables --table nat --delete-chain", \
@@ -401,7 +419,6 @@ sleep 3
                     "Version:%s\n"
                     "Update:%s\n"
                     "Contact: p0cL4bs@gmail.com\n"
-                    "         mh4root@gmail.com\n"
                     "The MIT License (MIT)\n"
                     "Author:%s\n"
                     "Copyright(c) 2015\n"% ( __version__, __update__, __author__)))
