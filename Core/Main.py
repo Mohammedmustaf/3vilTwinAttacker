@@ -401,6 +401,7 @@ sleep 3
                     "Version:%s\n"
                     "Update:%s\n"
                     "Contact: p0cL4bs@gmail.com\n"
+                    "         mh4root@gmail.com\n"
                     "The MIT License (MIT)\n"
                     "Author:%s\n"
                     "Copyright(c) 2015\n"% ( __version__, __update__, __author__)))
