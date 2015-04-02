@@ -228,7 +228,7 @@ class frm_dnsAttack(QWidget):
                     self.box_login.append("Email: " +s[0] + "   Password: " +s[1])
 
         elif self.rb_route.isChecked():
-            self.box_login.clesar()
+            self.box_login.clear()
             logins = []
             chdir(self.owd)
             self.box_login.append("=================== Router Logins =====================")
