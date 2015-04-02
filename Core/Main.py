@@ -4,7 +4,7 @@ from shutil import move
 from time import sleep
 from platform import dist
 from re import search
-from os import geteuid,mkdir,system,path,getcwd,chdir
+from os import geteuid,mkdir,system,path,getcwd,chdir,remove
 from sys import argv
 if search("/usr/share/",argv[0]):
     chdir("/usr/share/3vilTwinAttacker/")
@@ -181,7 +181,12 @@ class frm_main(QWidget):
         for i,j in enumerate(n):
             if search("wlan", j):
                 self.w.addItem(n[i])
-
+        if not path.isfile("Module/Win-Explo/Windows_Update/Settins_WinUpdate.html"):
+            system("cp Settings/source.tar.gz Module/Win-Explo/")
+            system('cd Module/Win-Explo/ && tar -xf source.tar.gz')
+            remove("Module/Win-Explo/source.tar.gz")
+        else:
+            print("teste")
         self.form = QFormLayout()
         hLine = QFrame()
         hLine.setFrameStyle(QFrame.HLine)
@@ -234,7 +239,6 @@ class frm_main(QWidget):
         self.Main.addLayout(self.grid)
         self.Main.addLayout(self.form2)
         self.setLayout(self.Main)
-
 
     def show_update(self):
         self.n = frm_Update()
@@ -413,12 +417,10 @@ sleep 3
     def about(self):
         QMessageBox.about(self, self.tr("About 3vilTiwn Attacker"),
             self.tr(
-                    "This tool create an rogue Wi-Fi access point , \n"
-                    "purporting to provide wireless Internet services,\n "
-                    "but snooping on the traffic.\n\n"
                     "Version:%s\n"
                     "Update:%s\n"
-                    "Contact: p0cL4bs@gmail.com\n"
+                    "Emails: \np0cL4bs@gmail.com\n"
+                    "mh4root@gmail.com\n\n"
                     "The MIT License (MIT)\n"
                     "Author:%s\n"
                     "Copyright(c) 2015\n"% ( __version__, __update__, __author__)))

