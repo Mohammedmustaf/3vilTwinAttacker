@@ -4,7 +4,7 @@ from subprocess import Popen,PIPE
 from scapy.all import *
 from Dns_Func import  frm_dhcp_Attack
 import threading
-from os import popen,system,getuid
+from os import popen,system,getuid,path,makedirs
 from re import search,compile,match
 from Core.Settings_fuc import frm_Settings
 from Module.fuc_airodump import  airdump_start,get_network_scan
@@ -130,6 +130,9 @@ class frm_deauth(QWidget):
         self.Main.addLayout(self.form2)
         self.setLayout(self.Main)
     def scan_diveces_airodump(self):
+	dirpath = "Settings/Dump"
+	if not path.isdir(dirpath):
+	  makedirs(dirpath)
         self.data = {'Bssid':[], 'Essid':[], 'Channel':[]}
         exit_air = airdump_start()
         self.fix = False
