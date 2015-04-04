@@ -275,7 +275,7 @@ class frm_main(QWidget):
 
     def newwindow(self):
         self.w = frm_window()
-        self.w.setGeometry(QRect(100, 100, 400, 200))
+        self.w.setGeometry(QRect(100, 100, 200, 200))
         self.w.show()
 
     def form_mac(self):
