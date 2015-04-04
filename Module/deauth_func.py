@@ -42,7 +42,17 @@ class frm_deauth(QWidget):
         self.ap_list = []
         self.pacote = []
         self.control = None
+        self.data = {'Bssid':[], 'Essid':[], 'Channel':[]}
         self.window_qt()
+
+    def select_target(self):
+        item = self.tables.selectedItems()
+        if item != []:
+            self.linetarget.setText(item[2].text())
+        else:
+            QMessageBox.critical(self, "Error in row", "Nothing row in tables, please try scan network again")
+            self.linetarget.clear()
+
     def window_qt(self):
         self.controlador = QLabel("")
         self.attack_OFF()
@@ -51,7 +61,26 @@ class frm_deauth(QWidget):
         self.form2 = QFormLayout()
         self.list = QListWidget()
         self.list.clicked.connect(self.list_clicked)
-        self.list.setFixedHeight(260)
+        self.list.setFixedHeight(20)
+
+        self.tables = QTableWidget(5,3)
+        self.tables.setFixedWidth(350)
+        self.tables.setRowCount(100)
+        self.tables.setFixedHeight(200)
+        self.tables.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tables.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tables.clicked.connect(self.select_target)
+        self.tables.resizeColumnsToContents()
+        self.tables.resizeRowsToContents()
+        self.tables.horizontalHeader().resizeSection(1,120)
+        self.tables.horizontalHeader().resizeSection(0,60)
+        self.tables.horizontalHeader().resizeSection(2,158)
+        self.tables.verticalHeader().setVisible(False)
+        Headers = []
+        for n, key in enumerate(self.data.keys()):
+            Headers.append(key)
+        self.tables.setHorizontalHeaderLabels(Headers)
+
 
         self.linetarget = QLineEdit()
         self.input_client = QLineEdit(self)
@@ -62,8 +91,8 @@ class frm_deauth(QWidget):
         self.btn_scan.clicked.connect(self.exec_sniff)
         self.btn_stop = QPushButton("Stop  Attack ", self)
         self.btn_stop.clicked.connect(self.kill_thread)
-        self.btn_enviar.setFixedWidth(200)
-        self.btn_stop.setFixedWidth(200)
+        self.btn_enviar.setFixedWidth(170)
+        self.btn_stop.setFixedWidth(170)
 
         #icons
         self.btn_scan.setIcon(QIcon("rsc/network.png"))
@@ -89,8 +118,7 @@ class frm_deauth(QWidget):
             if search("wlan", j):
                 self.get_placa.addItem(n[i])
         self.form0.addRow("Network scan time:", self.time_scan)
-        self.form1.addRow(QLabel("{0:5}\t{1:20}\t{2:25}".format("       Channel","   ESSID","       BSSID")))
-        self.form1.addRow(self.list)
+        self.form1.addRow(self.tables)
         self.form1.addRow(self.get_placa, self.btn_scan)
         self.form1.addRow("Target:", self.linetarget)
         self.form1.addRow("Packet:",self.w_pacote)
@@ -102,17 +130,26 @@ class frm_deauth(QWidget):
         self.Main.addLayout(self.form2)
         self.setLayout(self.Main)
     def scan_diveces_airodump(self):
+        self.data = {'Bssid':[], 'Essid':[], 'Channel':[]}
         exit_air = airdump_start()
+        self.fix = False
         if exit_air == None:
-            cap = get_network_scan()
-            self.list.clear()
-            if cap != None:
-                for i in cap:
+            self.cap = get_network_scan()
+            if self.cap != None:
+                for i in self.cap:
                     i = i.split("||")
                     if self.check_is_mac(i[2]):
-                        itm = QListWidgetItem("{0:5}\t{1:20}\t{2:20}".format(i[0], i[1], i[2]))
-                        itm.setIcon(QIcon(r"rsc/wifi.png"))
-                        self.list.addItem(itm)
+                        Headers = []
+                        self.data['Channel'].append(i[0])
+                        self.data['Essid'].append(i[1])
+                        self.data['Bssid'].append(i[2])
+                        for n, key in enumerate(self.data.keys()):
+                            Headers.append(key)
+                            for m, item in enumerate(self.data[key]):
+                                item = QTableWidgetItem(item)
+                                item.setTextAlignment(Qt.AlignVCenter | Qt.AlignCenter)
+                                self.tables.setItem(m, n, item)
+                    self.cap =[]
     def kill_thread(self):
         self.attack_OFF()
         self.control = 1
@@ -120,6 +157,7 @@ class frm_deauth(QWidget):
         if dat == "True":
             popen("killall xterm")
     def exec_sniff(self):
+        self.data = {'Bssid':[], 'Essid':[], 'Channel':[]}
         dot =1
         count = 0
         self.options_scan = self.xmlcheck.xmlSettings("monitor0", "scan_scapy", None, False)
@@ -176,9 +214,16 @@ class frm_deauth(QWidget):
                 for i in cap:
                     dat = i.split()
                     if self.check_is_mac(dat[3]):
-                        itm = QListWidgetItem("{0:5}\t{1:20}\t{2:20}".format(dat[0], dat[2], dat[3]))
-                        itm.setIcon(QIcon(r"rsc/wifi.png"))
-                        self.list.addItem(itm)
+                        self.data['Channel'].append(dat[0])
+                        self.data['Essid'].append(dat[2])
+                        self.data['Bssid'].append(dat[3])
+                        Headers = []
+                        for n, key in enumerate(self.data.keys()):
+                            Headers.append(key)
+                            for m, item in enumerate(self.data[key]):
+                                item = QTableWidgetItem(item)
+                                item.setTextAlignment(Qt.AlignVCenter | Qt.AlignCenter)
+                                self.tables.setItem(m, n, item)
                 cap = []
                 self.ap_list = []
             else:
