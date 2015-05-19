@@ -217,17 +217,12 @@ class frm_Arp_Poison(QWidget):
                         break
         else:
             self.arp_status(False)
+            
     def check_geteway_scan(self):
-        self.local = self.get_geteway()
-        if self.local or self.txt_gateway != "":
-            if not self.local:
-                self.t = threading.Thread(target=self.scanner_network,args=(str(self.txt_gateway.text()),))
-                self.t.daemon = True
-                self.t.start()
-            else:
-                self.t = threading.Thread(target=self.scanner_network,args=(self.local[0],))
-                self.t.daemon = True
-                self.t.start()
+        if self.txt_gateway != "":
+            self.t = threading.Thread(target=self.scanner_network,args=(str(self.txt_gateway.text()),))
+            self.t.daemon = True
+            self.t.start()
         else:
             QMessageBox.information(self,"Error", "Gateway Not found check the internet connection")
 
