@@ -1,6 +1,6 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from Module.connection import *
+from Modules.connection import *
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")

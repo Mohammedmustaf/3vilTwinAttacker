@@ -3,6 +3,7 @@ from scapy.all import *
 import threading
 from os import system,popen,getegid
 from re import search
+from Core.Settings import frm_Settings
 from platform import dist
 import time
 from subprocess import Popen,PIPE
@@ -12,11 +13,21 @@ class frm_dhcp_main(QMainWindow):
         super(frm_dhcp_main, self).__init__(parent)
         self.form_widget = frm_dhcp_Attack(self)
         self.setCentralWidget(self.form_widget)
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.setWindowTitle("DHCP Starvation Attack")
         self.setWindowIcon(QIcon('rsc/icon.ico'))
+
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
 class frm_dhcp_Attack(QWidget):
     def __init__(self, parent=None):

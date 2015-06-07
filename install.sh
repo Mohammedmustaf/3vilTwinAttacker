@@ -21,7 +21,7 @@ func_Banner(){
 	echo '   ============================='
 	echo "   |$bldblu 3vilTwinAttacker Installer$txtrst|"
 	echo '   ============================='
-	echo "          Version: $(tput setaf 5)0.5.8 $txtrst"
+	echo "          Version: $(tput setaf 5)0.5.9 $txtrst"
 }
 
 
@@ -74,6 +74,8 @@ func_install(){
 	sudo apt-get install nmap -y 
 	sudo apt-get install aircrack-ng -y
 	sudo apt-get install php5-cli -y
+	sudo pip install BeautifulSoup -y
+	sudo apt-get install python-nmap
 	sudo apt-get install mdk3 -y
     File="/etc/apt/sources.list"
     if  grep -q '#Eviltwininstall' $File;then
@@ -86,7 +88,6 @@ func_install(){
 	func_check_install "xterm"
 	func_check_install "nmap"
 	func_check_install "sslstrip"
-	func_check_install "nmap"
 	func_check_install "dhcpd"
 	func_check_install "aircrack-ng"
 	func_check_install "php"

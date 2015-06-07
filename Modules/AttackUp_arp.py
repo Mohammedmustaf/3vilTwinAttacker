@@ -1,8 +1,9 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from os import getcwd,popen,chdir,walk,path,remove,stat,getuid
-from Module.DHCPstarvation import frm_dhcp_Attack,conf_etter
+from Modules.DHCPstarvation import frm_dhcp_Attack,conf_etter
 from platform import linux_distribution
+from Core.Settings import frm_Settings
 from re import search
 import threading
 from shutil import copyfile
@@ -11,11 +12,20 @@ class frm_update_attack(QMainWindow):
         super(frm_update_attack, self).__init__(parent)
         self.form_widget = frm_WinSoftUp(self)
         self.setCentralWidget(self.form_widget)
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.setWindowTitle("Windows Update Attack Generator ")
         self.setWindowIcon(QIcon('rsc/icon.ico'))
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
 class frm_WinSoftUp(QWidget):
     def __init__(self, parent=None):
@@ -92,10 +102,10 @@ class frm_WinSoftUp(QWidget):
     def stop_attack(self):
         popen("killall xterm")
         self.alt_etter("")
-        if path.isfile("Module/Win-Explo/Windows_Update/index.html"):
-            remove("Module/Win-Explo/Windows_Update/index.html")
-        if path.isfile("Module/Win-Explo/Windows_Update/windows-update.exe"):
-            remove("Module/Win-Explo/Windows_Update/windows-update.exe")
+        if path.isfile("Modules/Win-Explo/Windows_Update/index.html"):
+            remove("Modules/Win-Explo/Windows_Update/index.html")
+        if path.isfile("Modules/Win-Explo/Windows_Update/windows-update.exe"):
+            remove("Modules/Win-Explo/Windows_Update/windows-update.exe")
         QMessageBox.information(self,"Clear Setting", "log cLear success ")
 
     def inter_get(self):
@@ -115,7 +125,7 @@ class frm_WinSoftUp(QWidget):
             QMessageBox.information(self, "Path file Error", "Error in get the file path.")
         else:
             if self.rb_windows.isChecked():
-                directory = "Module/Win-Explo/Windows_Update/"
+                directory = "Modules/Win-Explo/Windows_Update/"
                 self.logBox.addItem("[+] Set page Attack.")
                 try:
                     if path.isfile(directory+"windows-update.exe"):
@@ -124,7 +134,7 @@ class frm_WinSoftUp(QWidget):
                 except OSError,e:
                     print e
                 if not getuid() != 0:
-                    file_html = open("Module/Win-Explo/Settings_WinUpdate.html","r").read()
+                    file_html = open("Modules/Win-Explo/Settings_WinUpdate.html","r").read()
                     settings_html = file_html.replace("KBlenfile", str(self.getSize(self.path_file))+"KB")
                     if path.isfile(directory+"index.html"):
                         remove(directory+"index.html")

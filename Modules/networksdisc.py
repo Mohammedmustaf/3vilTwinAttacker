@@ -2,6 +2,7 @@
 from PyQt4.QtGui import *
 from os import getegid,popen
 from re import search
+from Core.Settings import frm_Settings
 from scapy.all import *
 
 class frm_list_IP(QMainWindow):
@@ -15,11 +16,20 @@ class frm_GetIP(QWidget):
     def __init__(self, parent=None):
         super(frm_GetIP, self).__init__(parent)
         self.setWindowTitle("Device fingerprint wireless network")
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.Main = QVBoxLayout()
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
         self.listGUI()
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+
     def get_clients(self):
         output =  popen("route | grep default ")
         conf =  output.read().split()

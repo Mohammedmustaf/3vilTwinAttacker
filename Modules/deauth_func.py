@@ -6,18 +6,27 @@ from Dns_Func import  frm_dhcp_Attack
 import threading
 from os import popen,system,getuid,path,makedirs
 from re import search,compile,match
-from Core.Settings_fuc import frm_Settings
-from Module.fuc_airodump import  airdump_start,get_network_scan
+from Core.Settings import frm_Settings
+from Modules.fuc_airodump import  airdump_start,get_network_scan
 class frm_window(QMainWindow):
     def __init__(self, parent=None):
         super(frm_window, self).__init__(parent)
         self.form_widget = frm_deauth(self)
         self.setCentralWidget(self.form_widget)
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.setWindowTitle("Deauth Attack wireless Route")
         self.setWindowIcon(QIcon('rsc/icon.ico'))
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'About Exit',"Are you sure to quit?", QMessageBox.Yes |

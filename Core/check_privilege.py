@@ -1,18 +1,43 @@
 from PyQt4.QtGui import *
 from subprocess import Popen, PIPE
-from os import popen
+from Core.Settings import frm_Settings
+from os import popen,getpid
 from re import search
-import getpass
 import threading
+import getpass
+from time import sleep
+
+global sudo_prompt
+sudo_prompt = None
+class waiter(threading.Thread):
+    def run(self):
+        for i in range(2):
+            sleep(5)
+        if sudo_prompt == None:
+            #popen("kill -9 %i"%(getpid()))
+            pass
+
 class frm_privelege(QDialog):
     def __init__(self, parent = None):
         super(frm_privelege, self).__init__(parent)
         self.setWindowTitle("Privilege Authentication")
         self.Main = QVBoxLayout()
         self.frm = QFormLayout()
-        self.setGeometry(0, 0, 400, 100)
+        self.setGeometry(0, 0, 270, 100)
         self.center()
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
         self.Qui()
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
     def center(self):
         frameGm = self.frameGeometry()
@@ -25,14 +50,15 @@ class frm_privelege(QDialog):
         self.user.addItem(getpass.getuser())
         self.btn_cancel = QPushButton("Cancel")
         self.btn_ok = QPushButton("Ok")
-        self.Editpassword = QLineEdit()
+        self.Editpassword = QLineEdit(self)
+        self.Editpassword.setFocus()
         #temporary
 
         self.Editpassword.setEchoMode(QLineEdit.Password)
         self.btn_cancel.clicked.connect(self.close)
         self.btn_ok.clicked.connect(self.function_ok)
         self.btn_ok.setDefault(True)
-        self.frm.addRow("Adminstrator:", self.user)
+        self.frm.addRow("User:", self.user)
         self.frm.addRow("Password:", self.Editpassword)
         self.grid = QGridLayout()
         self.grid.addWidget(self.btn_cancel, 1,2)
@@ -52,14 +78,18 @@ class frm_privelege(QDialog):
 
     def password_check(self,sudo_password):
         self.hide()
-        command = self.thread(sudo_password)
-        self.close()
-        return command
+        self.th = threading.Thread(target=self.thread, args=(sudo_password,))
+        self.th.daemon = True
+        self.th.start()
+        waiter().start()
+        self.th.join()
+        return sudo_prompt
+
     def thread(self,sudo_password):
-        command = 'python functions.py'.split()
         popen("sudo -k")
         sudo_password = self.Editpassword.text()
+        command = 'python functions.py'.split()
         p = Popen(['sudo', '-S'] + command, stdin=PIPE, stderr=PIPE,
           universal_newlines=True)
+        global sudo_prompt
         sudo_prompt = p.communicate(str(sudo_password) + '\n')[1]
-        return sudo_prompt      

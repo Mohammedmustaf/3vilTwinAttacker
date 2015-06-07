@@ -1,6 +1,7 @@
 from PyQt4.QtGui import *
 from re import search
 from os import system,geteuid,getuid
+from Core.Settings import frm_Settings
 from subprocess import Popen,PIPE
 from scapy.all import *
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
@@ -30,15 +31,23 @@ class frm_Probe(QMainWindow):
 class frm_PMonitor(QWidget):
     def __init__(self, parent=None):
         super(frm_PMonitor, self).__init__(parent)
-        sshFile="Core/dark_style.css"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
         self.Main = QVBoxLayout()
         self.setWindowTitle("Probe Request wifi Monitor")
         self.setWindowIcon(QIcon('rsc/icon.ico'))
         self.interface = "mon0"
-        self.setupGUI()
         self.probes = []
+        self.config = frm_Settings()
+        self.loadtheme(self.config.XmlThemeSelected())
+        self.setupGUI()
+    def loadtheme(self,theme):
+        if theme != "theme2":
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
+        else:
+            sshFile=("Core/%s.css"%(theme))
+            with open(sshFile,"r") as fh:
+                self.setStyleSheet(fh.read())
 
     def setupGUI(self):
         self.form0 = QFormLayout()
