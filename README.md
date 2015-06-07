@@ -1,16 +1,13 @@
-# 3vilTwinAttacker v0.5.8 Release
-This tool create an rogue Wi-Fi access point , purporting to provide wireless Internet services, but snooping on the traffic.
-![Tool Home](https://dl.dropboxusercontent.com/u/97321327/evil/3vil1.png)
+# 3vilTwinAttacker v0.5.9 
+Framework for EvilTwin Attacks
+![Tool Home](https://dl.dropboxusercontent.com/u/97321327/evil/3vil5.9.jpg)
 ---
-
-### Software dependencies:
-
-* Recommended to use Kali linux.
-* Ettercap.
-* Sslstrip.
-* Airbase-ng include in aircrack-ng.
-* DHCP.
-* Nmap.
+### dependencies:
+* Python-scapy
+* Python-nmap
+* BeautifulSoup
+* Airbase-ng include in aircrack-ng
+* DHCP-server
 
 #### Ubuntu and Kali install
 ```sh
@@ -41,66 +38,42 @@ $ apt-get update && apt-get install isc-dhcp-server
 ```sh
 $ sudo yum install dhcp
 ```
----
 
-### Tools Options:
+### Tools
+-  Etter.dns: Edit etter.dns to loading module dns spoof.
 
-![Tools Options](https://dl.dropboxusercontent.com/u/97321327/evil/evil2.png)
+-  Dns Spoof: Start dns spoof attack in interface ath0 fake AP.
 
-**Etter.dns:** Edit etter.dns to loading module dns spoof.
+- Ettercap: Start ettercap attack in host connected AP fake Capturing login credentials.
 
+-  Sslstrip: The sslstrip listen the traffic on port 10000.
 
-**Dns Spoof:** Start dns spoof attack in interface ath0 fake AP.
-
-
-**Ettercap:** Start ettercap attack in host connected AP fake Capturing login credentials.
+-  Driftnet: The driftnet sniffs and decodes any JPEG TCP sessions, then displays in  an window.
 
 
-**Sslstrip:** The sslstrip listen the traffic on port 10000.
+### Modules
+* Deauth Attack: kill all devices connected in AP (wireless network) or the attacker can Also put the Mac-address in the Client field, Then only one client disconnects the access point.
 
+* Probe Request:  Probe request  capture the  clients trying to connect to AP,Probe requests can be sent by anyone with a legitimate Media Access Control (MAC) address, as association to the network is not required at this stage.
 
-**Driftnet:** The driftnet sniffs and decodes any JPEG TCP sessions, then displays in  an window.
+* Mac Changer: you can now easily spoof the MAC address. With a few clicks, users will be able to change their MAC addresses.
 
+* Device FingerPrint:  list devices connected the network mini fingerprint, is information collected about a local computing device.
 
----
+* DHCP Starvation Attack: this module DHCP Starvation can be classified as a Denial of Service attack. is an attack that works by broadcasting vast numbers of DHCP requests with spoofed MAC addresses simultaneously.
 
+* DNS Spoof Manager: this module DNS spoofing is the making change in hostname ip-address table, this table tells the route will be that DNS address for that particular IP address, thus changing the address of this table we can redirect wherever we want.
 
+* Windows Update Attack:  this module is an attack DNS spoof que generate an update the page fake Windows, causing the victim to download a fake file update. 
 
-### New Options
-![Tools Options](https://dl.dropboxusercontent.com/u/97321327/evil/3vilupdate2.png)
-
-**Deauth Attack:** kill all devices connected in AP (wireless network) or the attacker can Also put the Mac-address in the Client field, Then only one client disconnects the access point.
-
-
-**Probe Request:**  Probe request  capture the  clients trying to connect to AP,Probe requests can be sent by anyone with a legitimate Media Access Control (MAC) address, as association to the network is not required at this stage.
-
-
-**Mac Changer:** you can now easily spoof the MAC address. With a few clicks, users will be able to change their MAC addresses.
-
-
-**Device FingerPrint:**  list devices connected the network mini fingerprint, is information collected about a local computing device.
-
-**DHCP Starvation Attack:** this module DHCP Starvation can be classified as a Denial of Service attack. is an attack that works by broadcasting vast numbers of DHCP requests with spoofed MAC addresses simultaneously.
-
-**DNS Spoof Manager:** this module DNS spoofing is the making change in hostname ip-address table, this table tells the route will be that DNS address for that particular IP address, thus changing the address of this table we can redirect wherever we want.
-
-**Windows Update Attack:**  this module is an attack DNS spoof que generate an update the page fake Windows, causing the victim to download a fake file update. 
-
-**ARP Posion Attack:**  change tables ARPspoof the target and redirect all request tcp to ip attacker.
-## Video Demo
-
-[![Video Demo](http://img.youtube.com/vi/Jrb43KVPIJw/0.jpg)](http://www.youtube.com/watch?v=Jrb43KVPIJw)
-
----
-
-[![Screen](http://img.youtube.com/vi/qVGLGNYyLzg/0.jpg)](http://youtu.be/qVGLGNYyLzg)
-
----
-[![video 2](http://img.youtube.com/vi/rNWvpV6NZoI/0.jpg)](http://youtu.be/rNWvpV6NZoI)
-
-
-
----
+* ARP Posion Attack:  change tables ARPspoof the target and redirect all request tcp to ip attacker.
+## Videos tutorials:
+[Demo 1](http://www.youtube.com/watch?v=Jrb43KVPIJw)
+--
+[Demo 2](http://youtu.be/qVGLGNYyLzg)
+--
+[Demo 3](http://youtu.be/rNWvpV6NZoI)
+--
 The MIT License (MIT)
 
 Copyright (c) 2015 P0cL4bs Team
