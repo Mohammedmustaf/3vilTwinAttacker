@@ -31,6 +31,12 @@ $ echo "deb http://ftp.de.debian.org/debian wheezy main " >> /etc/apt/sources.li
 $ apt-get update && apt-get install isc-dhcp-server
 ```
 
+##### Blackarch or Arch Assault and Arch Linux
+
+```sh
+$ sudo pacman -S dhcp
+```
+
 #### [install DHCP in  redhat-based]
 
 ##### Fedora
